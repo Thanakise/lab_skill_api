@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/lib/pq"
-	_ "github.com/lib/pq"
 	"github.com/thanakize/lab_skill_api/sharedinterface"
 )
 
