@@ -3,8 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"log"
-	"os"
 
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
@@ -17,23 +15,18 @@ type SkillReposiory struct{
 
 type ISkillRepository interface{
 	CloseDB()
-	GetSkill(string) (sharedinterface.Skill, error)
+	GetSkill(key string) (sharedinterface.Skill, error)
 	GetSkills() ([]sharedinterface.Skill, error)
-	InsertSkill(sharedinterface.Skill) (sharedinterface.Skill, error)
-	UpdateSkill(sharedinterface.Skill, string) (sharedinterface.Skill, error)
-	DeleteSkill(string) error
-	PatchSkillName(string, string) (sharedinterface.Skill, error)
-	PatchSkillDescription(string, string) (sharedinterface.Skill, error)
-	PatchSkillLogo(string, string) (sharedinterface.Skill, error)
-	PatchSkillTags([]string, string) (sharedinterface.Skill, error)
+	InsertSkill(skill sharedinterface.Skill) (sharedinterface.Skill, error)
+	UpdateSkill(skill sharedinterface.Skill, key string) (sharedinterface.Skill, error)
+	DeleteSkill(key string) error
+	PatchSkillName(name string, key string) (sharedinterface.Skill, error)
+	PatchSkillDescription(description string, key string) (sharedinterface.Skill, error)
+	PatchSkillLogo(logo string, key string) (sharedinterface.Skill, error)
+	PatchSkillTags(tags []string, key string) (sharedinterface.Skill, error)
 }
 
-func InitSkill() ISkillRepository{
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
-	if err != nil {
-		log.Fatal("Connect to database error", err)
-	}
-	// defer db.Close()
+func InitSkill(db *sql.DB) ISkillRepository{
 	return SkillReposiory{
 		DB: db,
 	}
@@ -42,6 +35,7 @@ func InitSkill() ISkillRepository{
 func (repo SkillReposiory) CloseDB(){
 	repo.DB.Close()
 }
+
 
 func (repo SkillReposiory) GetSkills() ([]sharedinterface.Skill, error) {
 	var skills []sharedinterface.Skill

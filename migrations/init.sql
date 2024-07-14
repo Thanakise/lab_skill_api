@@ -18,7 +18,6 @@ VALUES
 SET
 	name = EXCLUDED.name,
 	description = EXCLUDED.description,
-	levels = EXCLUDED.levels,
 	tags = EXCLUDED.tags;
 
 INSERT INTO

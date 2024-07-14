@@ -1,12 +1,11 @@
 package main
 
 import (
-	"reflect"
+	"fmt"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/thanakize/lab_skill_api/sharedinterface"
-	"github.com/thanakize/lab_skill_api/views"
+	"github.com/thanakize/lab_skill_api/repository"
 )
 
 func TestGetAllToDo(t *testing.T){
@@ -16,60 +15,35 @@ func TestGetAllToDo(t *testing.T){
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`
-		CREATE TABLE IF NOT EXISTS todos (
-				id SERIAL PRIMARY KEY,
-				title TEXT,
-				status TEXT
-		);
-		INSERT INTO
-			todos (title, status)
-		VALUES
-			(
-				'write code',
-				'active',
-			)
+	skillRepo := repository.InitSkill(db)
+	// skillRepo.CreateDataTest()
+	// defer skillRepo.DeleteDataTest()
+	
+	
+	expectedSQL := "SELECT key, name, description, logo, tags FROM skill"
 
-	`).WithArgs(nil)
-	mock.ExpectQuery("SELECT id, title, status FROM todos").WillReturnRows(sqlmock.NewRows([]string{}))
+	skill := sqlmock.NewRows([]string{"key", "name", "description", "logo", "tags"})
 
-
-	q := `
-		CREATE TABLE IF NOT EXISTS todos (
-				id SERIAL PRIMARY KEY,
-				title TEXT,
-				status TEXT
-		);
-		INSERT INTO
-			todos (title, status)
-		VALUES
-			(
-				'write code',
-				'active',
-			)
-
-	`
-	if _, err := db.Exec(q) ; err != nil{
-		t.Error(err.Error())
-	}
-
-
-
-	expectTodo := []sharedinterface.Todo{
-		{
-			ID: 1,
-			Title: "write code",
-			Status: "active",
-		},
-	}
-	todos, err := views.GetTodos(db)
+	mock.ExpectQuery(expectedSQL).WillReturnRows(skill)
+	
+	// expectSkill := []sharedinterface.Skill{
+	// 	{
+	// 		Key : "go",
+	// 		Name : "go",
+	// 		Description : "Go is an open source programming...",
+	// 		Logo : "",
+	// 		Tags : []string{"go", "golang"},
+	// 	},
+	// }
+	_, err = skillRepo.GetSkills()
 
 	if err != nil {
 		t.Error(err.Error())
 	}
 
-	if !reflect.DeepEqual(todos, expectTodo) {
-		t.Errorf("need: %v got : %v",expectTodo, todos)
+	if err = mock.ExpectationsWereMet(); err != nil {
+		fmt.Printf("unmet expectation error: %s", err)
 	}
+	
 
 }

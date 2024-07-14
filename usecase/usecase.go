@@ -10,15 +10,15 @@ type SkillUseCase struct{
 }
 
 type IUseCase interface{
-	GetSkill(string) (sharedinterface.Skill, error)
+	GetSkill(key string) (sharedinterface.Skill, error)
 	GetSkills() ([]sharedinterface.Skill, error)
-	InsertSkill(sharedinterface.Skill) (sharedinterface.Skill, error)
-	UpdateSkill(sharedinterface.Skill, string) (sharedinterface.Skill, error)
-	DeleteSkill(string) error
-	PatchSkillName(string, string) (sharedinterface.Skill, error)
-	PatchSkillDescription(string, string) (sharedinterface.Skill, error)
-	PatchSkillLogo(string, string) (sharedinterface.Skill, error)
-	PatchSkillTags([]string, string) (sharedinterface.Skill, error)
+	InsertSkill(skill sharedinterface.Skill) (sharedinterface.Skill, error)
+	UpdateSkill(skill sharedinterface.Skill, key string) (sharedinterface.Skill, error)
+	DeleteSkill(key string) error
+	PatchSkillName(name string, key string) (sharedinterface.Skill, error)
+	PatchSkillDescription(description string, key string) (sharedinterface.Skill, error)
+	PatchSkillLogo(logo string, key string) (sharedinterface.Skill, error)
+	PatchSkillTags(tags []string, key string) (sharedinterface.Skill, error)
 }
 
 func InitUseCase (skillRepo repository.ISkillRepository) IUseCase{
